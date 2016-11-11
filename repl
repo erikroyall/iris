@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+const byte = require("./index");
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+let state = null;
+rl.setPrompt("> ");
+rl.prompt();
+rl.on("line", function (data) {
+  let out;
+
+  if (data === ":q") {
+    rl.close();
+  }
+
+  state = byte.evaluate(byte.parse(data), state);
+  console.log(state.output);
+  state.output = "";
+  rl.prompt();
+});
+
