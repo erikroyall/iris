@@ -1,2 +1,7 @@
-main:
-goto main
+let i 1
+loop:
+print :i %ln
+add :i 1
+let i %retval
+if 10 > :i goto loop
+print bam!

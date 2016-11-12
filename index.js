@@ -154,7 +154,7 @@ const handlers = {
 
     if (args[1][0] === ":") {
       state.vars[args[0]] = state.vars[args[1].slice(1)];
-    } else if (arg[1][0] === "%") {
+    } else if (args[1][0] === "%") {
       state.vars[args[0]] = state.data[args[1].slice(1)];
     } else {
       state.vars[args[0]] = args[1];
@@ -199,8 +199,13 @@ function evaluate(tree, prevState) {
 
       // handle if
       if (ins.name === "if") {
-        if (helpers.test(ins.args[0], ins.args[1], ins.args[2])) {
-          state = evaluate(parse(ins.args.slice(3).join(" ")), state);
+        let resolved = helpers.resolve(ins.args, state);
+        if (helpers.test(resolved[0], resolved[1], resolved[2])) {
+          if (ins.args[3] === "goto") {
+            cur = labelTable[ins.args[4]] - 1;
+          } else {
+            state = evaluate(parse(ins.args.slice(3).join(" ")), state);    
+          }
         }
         continue;
       }
