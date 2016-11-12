@@ -153,29 +153,6 @@ function evaluate(tree, prevState) {
   return state;
 }
 
-let out = evaluate(parse(`
-  let god pootis
-  let name :god
-  goto main
-  ignored
-  main:
-  print hello :name
-  print %ln
-  print 1 + 1 =
-  add 1 1
-  print %retval
-`));
-
-let out2 = evaluate(parse(`
-  let god pootis
-  let name :god
-  goto main
-  ignored
-  main:
-  add 1 2
-  print hello :name %ln Do you know that 1 + 2 = %retval
-`));
-
 module.exports = {
   evaluate: evaluate,
   parse: parse
