@@ -61,51 +61,82 @@ function parse(code) {
   return flow;
 }
 
-var handlers = {
-  add: function addHandler (args) {
-    return args.reduce((acc,cur) => +acc + +cur);
-  },
-  sub: function subHandler (args) {
-    return args.reduce((acc,cur) => +acc - +cur);
-  },
-  mul: function mulHandler (args) {
-    return args.reduce((acc,cur) => +acc * +cur);
-  },
-  div: function divHandler (args) {
-    return args.reduce((acc,cur) => +acc / +cur);
-  },
-  print: function printHandler (args, state) {
-    let out = "";
-
-    args.forEach(function (arg) {
+const helpers = {
+  resolve: function (args, state) {
+    return args.map(function (arg) {
+      const head = arg[0], tail = arg.slice(1);
       if (arg === "%ln") {
-        out += "\n"
-      } else if (arg[0] === ":") {
-        out += state.vars[arg.slice(1)] + " ";
-      } else if (arg[0] === "%") {
-        out += state.data[arg.slice(1)] + " ";
+        return "\n";
+      } else if (head === ":") {
+        return state.vars[tail];
+      } else if (head === "%") {
+        return state.data[tail];
       } else {
-        out += arg + " ";
+        return arg;
       }
     });
-
-    state.output += out;
-    return 0;
-  },
-  let: function letHandler (arg, state, code) {
-    if (arg.length !== 2) {
-      console.error("let() takes 2 parameters, " + arg.length + " passed");
-      console.error(code);
-      console.error("    ^");
-      return -1;
+  }, checkargs: function (code, provides, rel, argc, name) {
+    let cond, relstring;
+    switch (rel) {
+      case ">":
+        cond = provides > argc;
+        relstring = "greater than";
+        break;
+      case "<":
+        cond = provides < argc;
+        relstring = "less than";
+        break;
+      case "==":
+        cond = provides === argc;
+        relstring = "exactly";
+        break;
+      case "!=":
+        cond = provides !== argc;
+        relstring = "!=";
+        break;
     }
 
-    else if (arg[1][0] === ":") {
-      state.vars[arg[0]] = state.vars[arg[1].slice(1)];
+    if (!cond) {
+      console.error(name + " expects " + (relstring ? relstring + " " : "") + argc + " arguments, " + provides + " provided");
+      console.error(code);
+      console.error(" ".repeat(name.length + 1) + "^");
+      return false;
+    }
+    return true;
+  }
+};
+
+const handlers = {
+  add: function addHandler (args, state, code) {
+    if (!helpers.checkargs(code, args.length, ">", 1, "add")) return -1; 
+    return helpers.resolve(args, state).reduce((acc,cur) => +acc + +cur);
+  },
+  sub: function subHandler (args, state, code) {
+    if (!helpers.checkargs(code, args.length, ">", 1, "sub")) return -1;
+    return helpers.resolve(args, state).reduce((acc,cur) => +acc - +cur);
+  },
+  mul: function mulHandler (args, state, code) {
+    if (!helpers.checkargs(code, args.length, ">", 1, "mul")) return -1;
+    return helpers.resolve(args, state).reduce((acc,cur) => +acc * +cur);
+  },
+  div: function divHandler (args, state, code) {
+    if (!helpers.checkargs(code, args.length, ">", 1, "div")) return -1;
+    return helpers.resolve(args, state).reduce((acc,cur) => +acc / +cur);
+  },
+  print: function printHandler (args, state, code) {
+    if (!helpers.checkargs(code, args.length, ">", 0, "print")) return -1;
+    state.output += helpers.resolve(args, state).join(" ");
+    return 0;
+  },
+  let: function letHandler (args, state, code) {
+    if (!helpers.checkargs(code, args.length, "==", 2, "let")) return -1;
+
+    if (args[1][0] === ":") {
+      state.vars[args[0]] = state.vars[args[1].slice(1)];
     } else if (arg[1][0] === "%") {
-      state.vars[arg[0]] = state.data[arg[1].slice(1)];
+      state.vars[args[0]] = state.data[args[1].slice(1)];
     } else {
-      state.vars[arg[0]] = arg[1];
+      state.vars[args[0]] = args[1];
     }
 
     return 0; 
@@ -146,9 +177,17 @@ function evaluate(tree, prevState) {
       }
       
       // call the handler
-      state.data.retval = handlers[ins.name](ins.args, state, ins.code);
+      
+      if (typeof handlers[ins.name] === "function") {
+        state.data.retval = handlers[ins.name](ins.args, state, ins.code);
+      } else {
+        console.error("Function " + ins.name + " doesn't exist");
+        console.error(ins.code);
+        console.error("^");
+      }
     }
   }
+
 
   return state;
 }
