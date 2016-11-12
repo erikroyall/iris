@@ -102,7 +102,28 @@ const helpers = {
       console.error(" ".repeat(name.length + 1) + "^");
       return false;
     }
+
     return true;
+  }, toBool: function (a) {
+    return a === "true";
+  }, test: function (a, op, b) {
+    let ab = this.toBool(a), bb = this.toBool(b);
+    switch (op) {
+      case "=": return +a === +b; break;
+      case "!=": return +a !== +b; break;
+      case "<": return +a < +b; break;
+      case ">": return +a > +b; break;
+      case ">=": return +a >= +b; break;
+      case "<=": return +a <= +b; break;
+      case "and":
+      case "&&": return ab && bb; break;
+      case "or":
+      case "||": return ab || bb; break;
+        //case "&": return +a & +b; break;
+        //case "|": return +a | +b; break;
+        //case "<<": return +a << +b; break;
+        //case ">>": return +a >> +b; break;
+    }
   }
 };
 
@@ -175,9 +196,16 @@ function evaluate(tree, prevState) {
         cur = labelTable[ins.args[0]] - 1;
         continue;
       }
+
+      // handle if
+      if (ins.name === "if") {
+        if (helpers.test(ins.args[0], ins.args[1], ins.args[2])) {
+          state = evaluate(parse(ins.args.slice(3).join(" ")), state);
+        }
+        continue;
+      }
       
       // call the handler
-      
       if (typeof handlers[ins.name] === "function") {
         state.data.retval = handlers[ins.name](ins.args, state, ins.code);
       } else {
@@ -187,7 +215,6 @@ function evaluate(tree, prevState) {
       }
     }
   }
-
 
   return state;
 }
