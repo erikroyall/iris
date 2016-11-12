@@ -19,7 +19,7 @@ rl.on("line", function (data) {
   }
 
   state = byte.evaluate(byte.parse(data), state);
-  console.log(state.output);
+  console.log(state.output === "" ? state.data.retval: state.output);
   state.output = "";
   rl.prompt();
 });

@@ -63,16 +63,16 @@ function parse(code) {
 
 var handlers = {
   add: function addHandler (args) {
-    return args.reduce((acc,cur) => +acc + +cur, 0);
+    return args.reduce((acc,cur) => +acc + +cur);
   },
   sub: function subHandler (args) {
-    return args.reduce((acc,cur) => +acc - +cur, 0);
+    return args.reduce((acc,cur) => +acc - +cur);
   },
   mul: function mulHandler (args) {
-    return args.reduce((acc,cur) => +acc * +cur, 0);
+    return args.reduce((acc,cur) => +acc * +cur);
   },
   div: function divHandler (args) {
-    return args.reduce((acc,cur) => +acc / +cur, 0);
+    return args.reduce((acc,cur) => +acc / +cur);
   },
   print: function printHandler (args, state) {
     let out = "";
