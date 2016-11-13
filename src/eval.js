@@ -2,7 +2,7 @@ const helpers = require("./helpers");
 const handlers = require("./handlers");
 const fs = require("fs");
 const parse = require("./parser");
-const lib = require("./lib");
+const lib = require("../lib");
 
 module.exports = function evaluate(tree, prevState) {
   const labelTable = {};
@@ -15,7 +15,7 @@ module.exports = function evaluate(tree, prevState) {
       output: "",
       vars: {}, // Program-defined variables
       data: {
-        retval: null  
+        retval: null
       },
       arrs: {}
     }
@@ -45,7 +45,7 @@ module.exports = function evaluate(tree, prevState) {
           if (ins.args[3] === "goto") {
             cur = labelTable[ins.args[4]] - 1;
           } else {
-            state = evaluate(parse(ins.args.slice(3).join(" ")), state);    
+            state = evaluate(parse(ins.args.slice(3).join(" ")), state);
           }
         }
         continue;
@@ -55,7 +55,7 @@ module.exports = function evaluate(tree, prevState) {
       if (typeof handlers[ins.name] === "function") {
         state.data.retval = handlers[ins.name](ins.args, state, ins.code);
       } else if (typeof lib[ins.name] === "function") {
-        state.data.retval = lib[ins.name](ins.args, state, ins.code); 
+        state.data.retval = lib[ins.name](ins.args, state, ins.code);
       } else {
         console.error("Function " + ins.name + " doesn't exist");
         console.error(ins.code);
