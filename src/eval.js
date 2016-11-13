@@ -1,5 +1,7 @@
 const helpers = require("./helpers");
 const handlers = require("./handlers");
+const fs = require("fs");
+const parse = require("./parser");
 
 module.exports = function evaluate(tree, prevState) {
   const labelTable = {};
@@ -43,6 +45,18 @@ module.exports = function evaluate(tree, prevState) {
           } else {
             state = evaluate(parse(ins.args.slice(3).join(" ")), state);    
           }
+        }
+        continue;
+      }
+
+      // handle @include
+      if (ins.name === "@include") {
+        if (fs.existsSync(ins.args[0])) {
+          const contents = fs.readFileSync(ins.args[0]).toString();
+          state = evaluate(parse(contents), state);0
+        } else {
+          console.error("Module " + ins.args[0] + " does not exist");
+          break;
         }
         continue;
       }

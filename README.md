@@ -53,6 +53,12 @@ main:
 if 2 < 3 print hello
 ```
 
+### @include
+
+```
+@include /path/to/script.iris
+```
+
 ### More examples
 
 ```
