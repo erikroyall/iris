@@ -15,7 +15,8 @@ module.exports = function evaluate(tree, prevState) {
       vars: {}, // Program-defined variables
       data: {
         retval: null  
-      }
+      },
+      arrs: {}
     }
   };
 
@@ -45,18 +46,6 @@ module.exports = function evaluate(tree, prevState) {
           } else {
             state = evaluate(parse(ins.args.slice(3).join(" ")), state);    
           }
-        }
-        continue;
-      }
-
-      // handle @include
-      if (ins.name === "@include") {
-        if (fs.existsSync(ins.args[0])) {
-          const contents = fs.readFileSync(ins.args[0]).toString();
-          state = evaluate(parse(contents), state);0
-        } else {
-          console.error("Module " + ins.args[0] + " does not exist");
-          break;
         }
         continue;
       }

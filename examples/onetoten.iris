@@ -1,7 +1,9 @@
 let i 1
+
 loop:
-print :i %ln
-add :i 1
-let i %retval
+  print :i %ln
+  add :i 1
+  let i %retval
 if :i <= 10 goto loop
+
 print bam!
