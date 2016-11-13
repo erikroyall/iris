@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const byte = require("./index");
+const iris = require("../src/index");
 const readline = require("readline");
 const fs = require("fs");
 
 if (process.argv.length > 2) {
   fs.readFile(process.argv[2], function (err, buf) {
-    console.log(byte.evaluate(byte.parse(buf.toString())).output);
+    console.log(iris.evaluate(iris.parse(buf.toString())).output);
     process.exit(0);
   });
 } else {
@@ -25,7 +25,7 @@ if (process.argv.length > 2) {
       rl.close();
     }
 
-    state = byte.evaluate(byte.parse(data), state);
+    state = iris.evaluate(iris.parse(data), state);
     console.log(state.output === "" ? state.data.retval: state.output);
     state.output = "";
     rl.prompt();
