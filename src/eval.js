@@ -2,6 +2,7 @@ const helpers = require("./helpers");
 const handlers = require("./handlers");
 const fs = require("fs");
 const parse = require("./parser");
+const lib = require("./lib");
 
 module.exports = function evaluate(tree, prevState) {
   const labelTable = {};
@@ -53,6 +54,8 @@ module.exports = function evaluate(tree, prevState) {
       // call the handler
       if (typeof handlers[ins.name] === "function") {
         state.data.retval = handlers[ins.name](ins.args, state, ins.code);
+      } else if (typeof lib[ins.name] === "function") {
+        state.data.retval = lib[ins.name](ins.args, state, ins.code); 
       } else {
         console.error("Function " + ins.name + " doesn't exist");
         console.error(ins.code);
