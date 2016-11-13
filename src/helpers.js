@@ -2,7 +2,7 @@ module.exports = {
   cleanCode: function (c) {
     return c.split("\n")
       .map(line => line.trim())
-      .filter(line => line !== "");
+      .filter(line => (line !== "" && line[0] !== "#"));
   },
   cleanLine: function (l) {
     return l.split(" ")

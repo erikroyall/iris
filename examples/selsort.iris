@@ -1,0 +1,47 @@
+# Selection Sort
+
+# Initialize array
+array.init a
+array.push a 3 2 4 5 1
+array.tostring a
+array.length a
+let n %retval
+
+# Start the outer loop
+let i 0
+if i >= n goto loop1end
+loop1:
+  let min :i
+
+  # Start the inner loop
+  add :i 1
+  let j %retval
+  if :j >= :n goto loop2end
+  loop2:
+    # Equivalent to aj = a[j], amin = a[min]
+    array.get a :j
+    let aj %retval
+
+    array.get a :min
+    let amin %retval
+
+    # If a[j] < a[min] min = j
+    if :aj < :amin let min :j
+
+    # j++, continue loop if j < n
+    inc j
+    if :j <= :n goto loop2
+    loop2end:
+
+  # Swap a[i] and a[temp]
+  array.get a :i
+  let temp %retval
+
+  array.set a :i :amin
+  array.set a :min :temp
+  # i++, continue loop if i < n
+  inc i
+  if :i < :n goto loop1
+  loop1end:
+
+array.tostring a

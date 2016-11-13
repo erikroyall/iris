@@ -6,6 +6,9 @@ module.exports = {
     if (!helpers.checkargs(code, args.length, ">", 1, "add")) return -1; 
     return helpers.resolve(args, state).reduce((acc,cur) => +acc + +cur);
   },
+  inc: function addHandler (args, state, code, rargs) {
+    return state.vars[rargs[0]] += +rargs[1] || 1;
+  },
   sub: function subHandler (args, state, code) {
     if (!helpers.checkargs(code, args.length, ">", 1, "sub")) return -1;
     return helpers.resolve(args, state).reduce((acc,cur) => +acc - +cur);

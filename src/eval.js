@@ -53,9 +53,9 @@ module.exports = function evaluate(tree, prevState) {
       
       // call the handler
       if (typeof handlers[ins.name] === "function") {
-        state.data.retval = handlers[ins.name](ins.args, state, ins.code);
+        state.data.retval = handlers[ins.name](ins.args, state, ins.code, helpers.resolve(ins.args, state));
       } else if (typeof lib[ins.name] === "function") {
-        state.data.retval = lib[ins.name](ins.args, state, ins.code);
+        state.data.retval = lib[ins.name](ins.args, state, ins.code, helpers.resolve(ins.args, state));
       } else {
         console.error("Function " + ins.name + " doesn't exist");
         console.error(ins.code);
